@@ -1,6 +1,6 @@
 import React, { useState, FormEvent, useEffect } from "react";
 import { GiModernCity } from 'react-icons/gi';
-import { RiDeleteBinLine, RiFileEditLine } from 'react-icons/ri';
+import { RiDeleteBinLine } from 'react-icons/ri';
 import { Link, useLocation } from 'react-router-dom';
 import { FiChevronLeft } from 'react-icons/fi';
 import { v4 as uuid } from 'uuid';
@@ -25,7 +25,6 @@ const Cities: React.FC = () => {
   const [repositories, setRepositories] = useState<CityRepository[]>([]);
   const [inputError, setInputError] = useState('');
   const [params,] = useState(useQuery());
-
 
   useEffect(() => {
     api.get(`cities?id=${params.id}`).then(response => {
@@ -68,7 +67,7 @@ const Cities: React.FC = () => {
 
   async function deleteCity(e: any) {
     confirmAlert({
-      title: 'Deseja remover o Estado',
+      title: 'Deseja remover o item',
       message: 'Esta ação irá remover em definitivo.',
       buttons: [
         {
@@ -83,6 +82,7 @@ const Cities: React.FC = () => {
     });
    
   }
+
 
 
   return (
