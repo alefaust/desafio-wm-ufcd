@@ -3,6 +3,8 @@ import { GiModernCity } from 'react-icons/gi';
 import { RiDeleteBinLine, RiFileEditLine } from 'react-icons/ri';
 import { Link, useLocation } from 'react-router-dom';
 import { FiChevronLeft } from 'react-icons/fi';
+import { v4 as uuid } from 'uuid';
+
 import api from '../../services/api';
 
 import { Title, Form, CityRepository, Container } from './styles';
@@ -42,6 +44,7 @@ const Cities: React.FC = () => {
 
     try {
       const data = {
+        "id": uuid(),
         "cities": newCity,
         "state_id": params.id
       };

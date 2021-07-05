@@ -3,10 +3,10 @@ import { IoMdPin } from 'react-icons/io';
 import { FiChevronRight } from 'react-icons/fi';
 import { RiDeleteBinLine } from 'react-icons/ri';
 import { Link } from 'react-router-dom';
+import { v4 as uuid } from 'uuid';
 
-import Select from 'react-select';
-
-import { useToast } from '../../hooks/toast';
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
 
 import api from '../../services/api';
 
@@ -25,16 +25,9 @@ interface Options {
 
 const State: React.FC = () => {
 
-  const { addToast } = useToast();
-
   const [newState, setNewState] = useState('');
   const [repositories, setRepositories] = useState<Repository[]>([]);
   const [inputError, setInputError] = useState('');
-  const [address, setAddress] = useState<{
-    label: string;
-    value: string;
-  } | null>(null);
-
 
   useEffect(() => {
     api.get(`state/`).then(response => {
@@ -54,16 +47,10 @@ const State: React.FC = () => {
 
     try {
       const data = {
+        "id": uuid(),
         "state": newState
       };
-      const response = await api.post(`state`, data);
-
-      addToast({
-        type: 'success',
-        title: 'O item froi removido!',
-        description: '',
-      });
-
+      await api.post(`state`, data);
       setNewState('');
       setInputError('');
     } catch (err) {
@@ -72,31 +59,22 @@ const State: React.FC = () => {
   }
 
   async function deleteState(e: any) {
-
-    await api.delete(`state?id=${e}`);
-
-    /*addToast({
-       type: 'success',
-       title: 'O item froi removido!',
-       description: '',
-    });*/
-
-  }
-
-
-  const loadState = async (inputValue: any, callback: any): Promise<void> => {
-    const response = await fetch("https://servicodados.ibge.gov.br/api/v1/localidades/estados").then(response => response.json())
-    let places: any = [];
-    if (inputValue.length < 5) return;
-    response.features.map((item: any) => {
-      places.push({
-        label: item.nome,
-        value: item.sigla,
-      });
+    confirmAlert({
+      title: 'Deseja remover o Estado',
+      message: 'Esta ação irá remover em definitivo.',
+      buttons: [
+        {
+          label: 'Sim',
+          onClick: async () => await api.delete(`state?id=${e}`)
+        },
+        {
+          label: 'Não',
+          onClick: () => ''
+        }
+      ]
     });
-    console.log(places);
-    callback(places);
-  };
+   
+  }
 
   return (
     <>
@@ -117,13 +95,13 @@ const State: React.FC = () => {
           <>
             <Container>
 
-              <IoMdPin size={20} color={'#0e7dfc'}/>
+              <IoMdPin size={20} color={'#0e7dfc'} />
               <div>
                 <strong>{repository.state}</strong>
               </div>
-                <button type="submit" onClick={e => deleteState(repository.id)}>
-                  <RiDeleteBinLine size={25} color={'#DF362D'} />
-                </button>
+              <button type="submit" onClick={e => deleteState(repository.id)}>
+                <RiDeleteBinLine size={25} color={'#DF362D'} />
+              </button>
               <Link
                 key={repository.id}
                 to={`/cities?id=${repository.id}&state=${repository.state}`}
