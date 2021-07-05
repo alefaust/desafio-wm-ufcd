@@ -59,16 +59,16 @@ const State: React.FC = () => {
        setInputError('Erro ao gravar dados');
     }
   }
- 
+
   async function deleteState(e:any) {
 
-    const teste = await api.delete(`state?id=${e}`);
+    await api.delete(`state?id=${e}`);
 
-    addToast({
+   /*addToast({
       type: 'success',
       title: 'O item froi removido!',
       description: '',
-    });
+   });*/
 
   }
 
@@ -78,7 +78,7 @@ const State: React.FC = () => {
   return (
     <>
       <Title>Cadastrar Estados</Title>
-      <Form  onSubmit={handleAddRepository}>
+      <Form onSubmit={handleAddRepository}>
         <input
           value={newState}
           onChange={e => setNewState(e.target.value)}

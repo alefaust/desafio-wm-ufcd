@@ -15,38 +15,38 @@ interface CityRepository {
 
 
 const Cities: React.FC = () => {
-    
+
     const [newCity, setNewCity] = useState('');
     const [repositories, setRepositories] = useState<CityRepository[]>([]);
-    
+
     const [params,] = useState(useQuery());
-    
+
     useEffect(() => {
         api.get(`cities?id=${params.id}`).then(response => {
           setRepositories(response.data);
         });
       }, [repositories,params]);
-    
+
      function useQuery() {
         const queryS = new URLSearchParams(useLocation().search);
 
         return { "id": queryS.get("id"), "state":queryS.get("state")};
 
-      }  
+      }
 
-      
+
     async function handleAddRepository(
         e: FormEvent<HTMLFormElement>,
       ): Promise<void> {
         e.preventDefault();
-    
+
         try {
           const data = {
               "cities": newCity,
               "state_id": params.id
           };
            await api.post(`cities`,data);
-          
+
           /*setRepositories([repository]);*/
           setNewCity('');
           /*setInputError('');*/
@@ -54,11 +54,29 @@ const Cities: React.FC = () => {
           /* setInputError('Erro na busca por esse repositório');*/
         }
       }
+
+      async function deleteCity(e:any) {
+
+        await api.delete(`cities?id=${e}`);
+    
+       /*addToast({
+          type: 'success',
+          title: 'O item froi removido!',
+          description: '',
+       });*/
+    
+      }
+
+      async function editCity(params:any) {
+        setNewCity("teste");
+      }
+    
+
     return (
         <>
             <Title>Cadastrar cidades {params.state}</Title>
             <Form onSubmit={handleAddRepository}>
-                <input 
+                <input
                 value={newCity}
                 onChange={e => setNewCity(e.target.value)}
                  placeholder="Digitar a cidade" />
@@ -66,18 +84,19 @@ const Cities: React.FC = () => {
             </Form>
             <CityRepository>
                 {repositories.map(res => (
-                <Link key={res.id} to={`/`}>
+               <>
+               <Link key={res.id} to={`/`}>
                      <FiChevronLeft size={20} />
                     <IoMdPin size={20} />
                     <div>
                         <strong>{res.cities}</strong>
                     </div>
-                      <button type="submit">
-                          <RiFileEditLine size={25} color={'#FF8250'}/>
-                        </button>
-                      <button type="submit"><RiDeleteBinLine size={25} color={'#DF362D'} /></button>
+                      
                 </Link>
                 
+                <button type="submit" onClick={e => editCity(res.id)}><RiFileEditLine size={25} color={'#FF8250'}/></button>
+                <button type="submit" onClick={e => deleteCity(res.id)}><RiDeleteBinLine size={25} color={'#DF362D'} /></button>
+                </>
                 ))}
             </CityRepository>
 
