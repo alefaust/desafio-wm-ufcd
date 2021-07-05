@@ -37,7 +37,16 @@ export const Form = styled.form`
 export const Repository = styled.div`
   margin-top: 80px;
   max-width: 700px;
-  a {
+
+`;
+
+export const Error = styled.span`
+  display: block;
+  color: #c53030;
+  margin-top: 8px;
+`;
+
+export const Container = styled.div`
     background: #fff;
     border-radius: 5px;
     width: 100%;
@@ -47,10 +56,18 @@ export const Repository = styled.div`
     display: flex;
     align-items: center;
     transition: transform 0.2s;
-    & + a {
-      margin-top: 16px;
+    & + div {
+      margin-top: 16px !important;
     }
     &:hover {
+      background: ${shade(0.5, '#fff')};
+    }
+
+    a{
+      width: 50px;
+      transition: transform 0.2s;
+    }
+    a:hover {
       transform: translateX(10px);
     }
     div {
@@ -61,31 +78,20 @@ export const Repository = styled.div`
         color: #3d3d4d;
       }
     }
-    
-    svg {
-      margin-left: auto;
-      color: #cbcbd6;
-    }
-  }
-
-  .buttonDel {
-
     button {
       width: 40px;
       border: none;
       background: transparent;
       border-radius: 5px;
-
     }
     button:hover {
       background: #F9F1F0;
     }
-  }
-
-`;
-
-export const Error = styled.span`
-  display: block;
-  color: #c53030;
-  margin-top: 8px;
+    svg {
+      margin-left: auto;
+      color: #cbcbd6;
+    }svg:hover{
+      color: #3d3d4d;
+    }
+  
 `;

@@ -3,19 +3,25 @@ import { IoMdPin } from 'react-icons/io';
 import { FiChevronRight } from 'react-icons/fi';
 import { RiDeleteBinLine } from 'react-icons/ri';
 import { Link } from 'react-router-dom';
-import AsyncSelect from "react-select/async";
+
+import Select from 'react-select';
 
 import { useToast } from '../../hooks/toast';
 
 import api from '../../services/api';
 
-import { Title, Form, Repository, Error } from './styles';
+import { Title, Form, Repository, Error, Container } from './styles';
 
 interface Repository {
   id: string;
   state: string;
 }
 
+
+interface Options {
+  label: string;
+  value: string;
+}
 
 const State: React.FC = () => {
 
@@ -24,6 +30,11 @@ const State: React.FC = () => {
   const [newState, setNewState] = useState('');
   const [repositories, setRepositories] = useState<Repository[]>([]);
   const [inputError, setInputError] = useState('');
+  const [address, setAddress] = useState<{
+    label: string;
+    value: string;
+  } | null>(null);
+
 
   useEffect(() => {
     api.get(`state/`).then(response => {
@@ -56,29 +67,42 @@ const State: React.FC = () => {
       setNewState('');
       setInputError('');
     } catch (err) {
-       setInputError('Erro ao gravar dados');
+      setInputError('Erro ao gravar dados');
     }
   }
 
-  async function deleteState(e:any) {
+  async function deleteState(e: any) {
 
     await api.delete(`state?id=${e}`);
 
-   /*addToast({
-      type: 'success',
-      title: 'O item froi removido!',
-      description: '',
-   });*/
+    /*addToast({
+       type: 'success',
+       title: 'O item froi removido!',
+       description: '',
+    });*/
 
   }
 
 
-
+  const loadState = async (inputValue: any, callback: any): Promise<void> => {
+    const response = await fetch("https://servicodados.ibge.gov.br/api/v1/localidades/estados").then(response => response.json())
+    let places: any = [];
+    if (inputValue.length < 5) return;
+    response.features.map((item: any) => {
+      places.push({
+        label: item.nome,
+        value: item.sigla,
+      });
+    });
+    console.log(places);
+    callback(places);
+  };
 
   return (
     <>
       <Title>Cadastrar Estados</Title>
       <Form onSubmit={handleAddRepository}>
+
         <input
           value={newState}
           onChange={e => setNewState(e.target.value)}
@@ -91,22 +115,23 @@ const State: React.FC = () => {
       <Repository>
         {repositories.map(repository => (
           <>
-            <Link
-              key={repository.id}
-              to={`/cities?id=${repository.id}&state=${repository.state}`}
+            <Container>
 
-            >
-              <IoMdPin size={20} />
+              <IoMdPin size={20} color={'#0e7dfc'}/>
               <div>
                 <strong>{repository.state}</strong>
               </div>
-              <FiChevronRight size={20} />
-            </Link>
-            <div className="buttonDel">
-              <button type="submit" onClick={e => deleteState(repository.id)}>
-                <RiDeleteBinLine size={25} color={'#DF362D'} />
-              </button>
-            </div>
+                <button type="submit" onClick={e => deleteState(repository.id)}>
+                  <RiDeleteBinLine size={25} color={'#DF362D'} />
+                </button>
+              <Link
+                key={repository.id}
+                to={`/cities?id=${repository.id}&state=${repository.state}`}
+
+              >
+                <FiChevronRight size={30} />
+              </Link>
+            </Container>
           </>
         ))}
       </Repository>

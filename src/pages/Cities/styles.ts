@@ -36,8 +36,11 @@ export const Form = styled.form`
 
 export const CityRepository = styled.div`
  margin-top: 80px;
-  max-width: 700px;
-  a {
+max-width: 700px;
+
+`;
+
+export const Container = styled.div`
     background: #fff;
     border-radius: 5px;
     width: 100%;
@@ -47,10 +50,18 @@ export const CityRepository = styled.div`
     display: flex;
     align-items: center;
     transition: transform 0.2s;
-    & + a {
-      margin-top: 16px;
+    & + div {
+      margin-top: 16px !important;
     }
     &:hover {
+      background: ${shade(0.5, '#fff')};
+    }
+
+    a{
+      width: 50px;
+      transition: transform 0.2s;
+    }
+    a:hover {
       transform: translateX(-10px);
     }
     div {
@@ -73,6 +84,8 @@ export const CityRepository = styled.div`
     svg {
       margin-left: auto;
       color: #cbcbd6;
+    }svg:hover{
+      color: #3d3d4d;
     }
-  }
+  
 `;
