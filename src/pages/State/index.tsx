@@ -105,7 +105,6 @@ const State: React.FC = () => {
               <Link
                 key={repository.id}
                 to={`/cities?id=${repository.id}&state=${repository.state}`}
-
               >
                 <FiChevronRight size={30} />
               </Link>

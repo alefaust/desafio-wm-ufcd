@@ -7,7 +7,10 @@ import { v4 as uuid } from 'uuid';
 
 import api from '../../services/api';
 
-import { Title, Form, CityRepository, Container } from './styles';
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
+
+import { Title, Form, CityRepository, Error, Container } from './styles';
 
 interface CityRepository {
   id: string;
@@ -20,8 +23,9 @@ const Cities: React.FC = () => {
 
   const [newCity, setNewCity] = useState('');
   const [repositories, setRepositories] = useState<CityRepository[]>([]);
-
+  const [inputError, setInputError] = useState('');
   const [params,] = useState(useQuery());
+
 
   useEffect(() => {
     api.get(`cities?id=${params.id}`).then(response => {
@@ -42,6 +46,11 @@ const Cities: React.FC = () => {
   ): Promise<void> {
     e.preventDefault();
 
+    if (!newCity) {
+      setInputError('Digite um nome para a cidade');
+      return;
+    }
+
     try {
       const data = {
         "id": uuid(),
@@ -50,29 +59,29 @@ const Cities: React.FC = () => {
       };
       await api.post(`cities`, data);
 
-      /*setRepositories([repository]);*/
       setNewCity('');
-      /*setInputError('');*/
+      setInputError('');
     } catch (err) {
-      /* setInputError('Erro na busca por esse repositório');*/
+      setInputError('Erro na busca dos dados');
     }
   }
 
   async function deleteCity(e: any) {
-
-    await api.delete(`cities?id=${e}`);
-
-    /*addToast({
-       type: 'success',
-       title: 'O item froi removido!',
-       description: '',
-    });*/
-
-  }
-
-  async function editCity(params: any) {
-    setNewCity("teste");
-    console.log(repositories);
+    confirmAlert({
+      title: 'Deseja remover o Estado',
+      message: 'Esta ação irá remover em definitivo.',
+      buttons: [
+        {
+          label: 'Sim',
+          onClick: async () => await api.delete(`cities?id=${e}`)
+        },
+        {
+          label: 'Não',
+          onClick: () => ''
+        }
+      ]
+    });
+   
   }
 
 
@@ -86,6 +95,9 @@ const Cities: React.FC = () => {
           placeholder="Digitar a cidade" />
         <button type="submit">Adicionar</button>
       </Form>
+
+      {inputError && <Error>{inputError}</Error>}
+
       <CityRepository>
         {repositories.map(res => (
           <>
@@ -97,7 +109,6 @@ const Cities: React.FC = () => {
               <div>
                 <strong>{res.cities}</strong>
               </div>
-              <button type="submit" onClick={e => editCity(res.id)}><RiFileEditLine size={25} color={'#FF8250'} /></button>
               <button type="submit" onClick={e => deleteCity(res.id)}><RiDeleteBinLine size={25} color={'#DF362D'} /></button>
             </Container>
 
